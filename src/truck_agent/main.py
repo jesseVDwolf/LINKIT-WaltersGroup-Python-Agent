@@ -19,20 +19,23 @@ def decide(req: DecideRequest) -> DecideResponse:
         diesel_price_per_liter = 2.023
         km_per_liter_consumption = 5.0
         cargo_delivery_time = 5.0
-        price_for_fuel: List[float] = [
-            offer.km_to_deliver / km_per_liter_consumption * diesel_price_per_liter
-            for offer in req.offers
-        ]
 
-        def key_func(offer: Tuple[int, CargoOffer]) -> float:
-            return (offer[1].price - price_for_fuel[offer[0]])  / (offer[1].eta_to_deliver + cargo_delivery_time)
+        offers = [ {**cargo_offer.dict()} for cargo_offer in req.offers]
+        for offer in offers:
+            offer['price_for_fuel'] = offer['km_to_deliver'] / km_per_liter_consumption * diesel_price_per_liter
+            offer['gain'] = (offer['price'] - offer['price_for_fuel']) / (offer['eta_to_deliver'] + cargo_delivery_time)
 
         # FIRST Algorithm
         # find the uid for the offer with the best margin where
         # margin = req.offers[x].price / req.offers[x].eta_to_deliver
-        _, offer = max(enumerate(req.offers), key=key_func)
+        offer = max(offers, key=lambda x: x['gain'])
+        if offer['gain'] < 0:
+            return DecideResponse(command="SLEEP", argument=1)
 
-        return DecideResponse(command="DELIVER", argument=offer.uid)
+        if req.truck.hours_since_full_rest > 24:
+            return DecideResponse(command="SLEEP", argument=8)
+
+        return DecideResponse(command="DELIVER", argument=offer['uid'])
     else:
         return DecideResponse(command="SLEEP", argument=1)
 
