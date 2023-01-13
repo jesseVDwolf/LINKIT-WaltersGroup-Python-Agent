@@ -21,7 +21,7 @@ def decide(req: DecideRequest) -> DecideResponse:
         cargo_delivery_time = 2.0
         sleep_time = 20
         start_time = 7
-        end_time = 17
+        end_time = 21
 
         offers = [ {**cargo_offer.dict()} for cargo_offer in req.offers]
         for offer in offers:
