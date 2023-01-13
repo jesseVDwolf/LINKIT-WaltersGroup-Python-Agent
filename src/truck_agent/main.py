@@ -41,7 +41,6 @@ def decide(req: DecideRequest) -> DecideResponse:
                 time_to_wait = 24 - current_time + start_time
             
             offer['gain'] = (offer['price'] - offer['price_for_fuel']) / (offer['eta_to_deliver'] + cargo_delivery_time + offer['extra_time'] + time_to_wait)
-            offer['gain'] -= 20
             
 
         # FIRST Algorithm
@@ -49,8 +48,11 @@ def decide(req: DecideRequest) -> DecideResponse:
         # margin = req.offers[x].price / req.offers[x].eta_to_deliver
         offer = max(offers, key=lambda x: x['gain'])
 
-        if offer['gain'] < 0:
+        if offer['gain'] < 20 and req.truck.hours_since_full_rest > sleep_time:
             return DecideResponse(command="SLEEP", argument=8)
+        
+        if offer['gain'] < 0:
+            return DecideResponse(command="SLEEP", argument=1)
 
         return DecideResponse(command="DELIVER", argument=offer['uid'])
     else:
