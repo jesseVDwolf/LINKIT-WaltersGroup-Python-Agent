@@ -40,7 +40,8 @@ def decide(req: DecideRequest) -> DecideResponse:
             if end_time <= current_time:
                 time_to_wait = 24 - current_time + start_time
             
-            offer['gain'] = (offer['price'] - offer['price_for_fuel']) / (offer['eta_to_deliver'] + cargo_delivery_time + offer['extra_time'] + time_to_wait)
+            # offer['gain'] = (offer['price'] - offer['price_for_fuel']) / (offer['eta_to_deliver'] + cargo_delivery_time + offer['extra_time'] + time_to_wait)
+            offer['gain'] = (offer['price'] - offer['price_for_fuel']) / (offer['eta_to_deliver'] + cargo_delivery_time)
 
             
 
