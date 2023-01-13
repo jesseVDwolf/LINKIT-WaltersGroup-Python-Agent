@@ -25,7 +25,7 @@ def decide(req: DecideRequest) -> DecideResponse:
         # FIRST Algorithm
         # find the uid for the offer with the best margin where
         # margin = req.offers[x].price / req.offers[x].eta_to_deliver
-        _, offer = max(enumerate(req.offers), key=lambda offer: (offer[1].price - liters_needed[offer[0]])  / offer[1].eta_to_deliver)
+        _, offer = max(enumerate(req.offers), key=lambda offer: (offer[1].price - 0)  / offer[1].eta_to_deliver)
 
         return DecideResponse(command="DELIVER", argument=offer.uid)
     else:
