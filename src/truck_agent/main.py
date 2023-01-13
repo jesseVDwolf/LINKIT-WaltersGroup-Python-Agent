@@ -19,7 +19,7 @@ def decide(req: DecideRequest) -> DecideResponse:
         diesel_price_per_liter = 2.023
         km_per_liter_consumption = 5.0
         cargo_delivery_time = 5.0
-        sleep_time = 24
+        sleep_time = 18.0
 
         offers = [ {**cargo_offer.dict()} for cargo_offer in req.offers]
         for offer in offers:
@@ -37,11 +37,11 @@ def decide(req: DecideRequest) -> DecideResponse:
         # margin = req.offers[x].price / req.offers[x].eta_to_deliver
         offer = max(offers, key=lambda x: x['gain'])
 
+        if req.truck.hours_since_full_rest > sleep_time:
+            return DecideResponse(command="SLEEP", argument=8)
+
         if offer['gain'] < 0:
             return DecideResponse(command="SLEEP", argument=1)
-
-        if req.truck.hours_since_full_rest > 24:
-            return DecideResponse(command="SLEEP", argument=8)
 
         return DecideResponse(command="DELIVER", argument=offer['uid'])
     else:
