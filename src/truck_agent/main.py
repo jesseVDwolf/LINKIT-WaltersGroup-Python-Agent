@@ -11,7 +11,13 @@ def decide(req: DecideRequest) -> DecideResponse:
     a detailed description of this endpoint.
     """
     if req.offers:
-        return DecideResponse(command="DELIVER", argument=req.offers[0].uid)
+
+        # FIRST Algorithm
+        # find the uid for the offer with the best margin where
+        # margin = req.offers[x].price / req.offers[x].eta_to_deliver
+        offer = max(req.offers, key=lambda offer: offer.price / offer.eta_to_deliver)
+
+        return DecideResponse(command="DELIVER", argument=offer.uid)
     else:
         return DecideResponse(command="SLEEP", argument=1)
 

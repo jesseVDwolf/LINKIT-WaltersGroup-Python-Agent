@@ -18,5 +18,5 @@ def test_sample_decide_request():
     assert response.status_code == 200
     assert response.json() == {
         "command": "DELIVER",
-        "argument": "100",
+        "argument": "106",
     }
