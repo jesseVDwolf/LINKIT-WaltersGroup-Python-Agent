@@ -18,15 +18,15 @@ def decide(req: DecideRequest) -> DecideResponse:
         # 2.023 * liters_needed = price_for_gas
         diesel_price_per_liter = 2.023
         km_per_liter_consumption = 5.0
-        cargo_delivery_time = 5.0
-        sleep_time = 36
+        cargo_delivery_time = 2.0
+        sleep_time = 42
         start_time = 9
         end_time = 19
 
         offers = [ {**cargo_offer.dict()} for cargo_offer in req.offers]
         for offer in offers:
             offer['price_for_fuel'] = offer['km_to_deliver'] / km_per_liter_consumption * diesel_price_per_liter
-            incident_chance =  (offer['eta_to_deliver'] + req.truck.hours_since_full_rest - sleep_time) * 0.05
+            incident_chance =  (offer['eta_to_deliver'] + req.truck.hours_since_full_rest - sleep_time) * 0.01
             if incident_chance > 1:
                 incident_chance = 1
             elif incident_chance < 0:
